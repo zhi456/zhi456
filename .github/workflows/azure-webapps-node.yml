@@ -1,0 +1,78 @@
+名字
+#
+[部署到 Azure WebApp]
+身份证
+#
+用途
+#
+与
+包裹
+#
+#2。在存储库中创建一个名为AZURE_WEBAPP_PUBLISH_PROFILE的secret，将PUBLISH PROFILE内容粘贴为secret的值。
+#有关获取发布概要文件的说明，请参阅：https://docs.microsoft.com/azure/app-service/deploy-github-actions#configure-the-github-secret
+#
+#3。更改AZURE_WEBAPP_NAME的值。还可以更改AZURE_WEBAPP_PACKAGE_PATH和NODE_VERSION环境变量。
+#
+#有关Azure的GitHub操作的更多信息：https://GitHub.com/Azure/Actions
+#有关Azure Web Apps部署操作的更多信息：https://github.com/Azure/webapps-Deploy
+#了解更多示例以开始GitHub Action工作流部署到Azure：https://GitHub.com/Azure/actions-workflow-samples
+
+在:
+推:
+分支: [ "main" ]
+query为空workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: your-app-name    #将其设置为应用程序的名称
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      #将其设置为web app项目的路径，默认为存储库根目录
+  NODE_VERSION: '20.x'                #将其设置为要使用的节点版本
+
+权限:
+内容: 阅读
+
+工作:
+建筑:
+    runs-on: ubuntu-latest
+步骤:
+    - 用途: actions/checkout@v4
+
+    - 用法：actions/setup-node@v4: Set up Node.js
+node-version: ${{ env.NODE_VERSION }}: actions/setup-node@v4
+缓存：“npm”:
+        node-version: ${{ env.NODE_VERSION }}
+用途: 'npm'
+
+    - -姓名：上传部署作业工件: npm install, build, and test
+部署: |
+npm安装
+npm运行构建-如果-存在
+npm运行测试-如果-存在
+
+actions/checkout@v4
+设置Node.js
+权限:
+actions/setup-node@v4
+内容: .
+
+运行：ubuntu-:
+必须:
+$
+npm安装、构建和测试
+上传部署作业构件
+环境:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+名称：“Development”:
+    - url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}: Download artifact from build job
+-name：从build job下载工件: actions/download-artifact@v3
+用途：actions/下载-artifact@v3:
+名称：node-app: node-app
+
+    - -名称：“部署到Azure WebApp”: id: deploy-to-webapp
+用途：azure/webapps-deploy@v2: deploy-to-webapp
+app-name: ${{ env.AZURE_WEBAPP_NAME }}: azure/webapps-deploy@v2
+发布-PROFILE:${secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+包：${{env.AZURE_WEBAPP_PACKAGE_PATH}}: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
